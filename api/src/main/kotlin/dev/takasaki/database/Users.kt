@@ -2,12 +2,15 @@ package dev.takasaki.database
 
 import com.toxicbakery.bcrypt.Bcrypt
 import cool.graph.cuid.Cuid
+import dev.takasaki.dtos.Login
 import dev.takasaki.dtos.SecureUser
 import dev.takasaki.dtos.User
+import dev.takasaki.exceptions.UnauthorizedException
 import dev.takasaki.exceptions.database.DuplicateRegisterException
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.SQLIntegrityConstraintViolationException
 import java.util.*
@@ -47,6 +50,32 @@ object Users : Table() {
                 throw DuplicateRegisterException("User with email ${user.email} already exists")
             }
             throw e
+        }
+    }
+
+    fun login(loginRequest: Login): SecureUser {
+        try {
+            val locatedUser = transaction {
+                Users.select {
+                    email eq loginRequest.email
+                }.first()
+            }
+
+            val passwordHashRaw = Base64.getDecoder().decode(locatedUser[password])
+            if(!Bcrypt.verify(loginRequest.password, passwordHashRaw)) {
+                throw UnauthorizedException("Invalid credentials")
+            }
+
+            return SecureUser(
+                locatedUser[id],
+                locatedUser[name],
+                locatedUser[surname],
+                locatedUser[email],
+                locatedUser[phone],
+                locatedUser[userType]
+            )
+        } catch (e: NoSuchElementException) {
+            throw UnauthorizedException("Invalid credentials")
         }
     }
 }
