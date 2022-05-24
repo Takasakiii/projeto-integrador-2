@@ -1,6 +1,7 @@
 package dev.takasaki.plugins
 
 import dev.takasaki.controllers.authRouter
+import dev.takasaki.exceptions.UnauthorizedException
 import dev.takasaki.exceptions.database.DuplicateRegisterException
 import dev.takasaki.extensions.getValidationErrors
 import io.ktor.server.routing.*
@@ -23,12 +24,11 @@ fun Application.configureRouting() {
                 ErrorDTO(message = cause.getValidationErrors())
             )
         }
-        exception<Exception> {call, cause ->
-            call.respond(HttpStatusCode.InternalServerError,
-                ErrorDTO(message = cause.message ?: "Internal server error")
+        exception<UnauthorizedException> {call, cause ->
+            call.respond(HttpStatusCode.Unauthorized,
+                ErrorDTO(message = cause.message ?: "Unauthorized")
             )
         }
-    
     }
 
     routing {
