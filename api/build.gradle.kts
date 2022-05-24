@@ -41,4 +41,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
 
     implementation("mysql:mysql-connector-java:8.0.19")
+
+    implementation("org.valiktor:valiktor-core:0.12.0")
+    implementation("cool.graph:cuid-java:0.1.1")
+    implementation("com.ToxicBakery.library.bcrypt:bcrypt:+")
 }
