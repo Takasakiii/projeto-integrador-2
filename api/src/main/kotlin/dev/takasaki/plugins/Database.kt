@@ -1,6 +1,8 @@
 package dev.takasaki.plugins
 
 
+import dev.takasaki.database.Images
+import dev.takasaki.database.Items
 import dev.takasaki.database.Users
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
@@ -17,6 +19,6 @@ fun Application.configureDatabase() {
     Database.connect(url, driver = "com.mysql.cj.jdbc.Driver", user = username, password = password)
 
     transaction {
-        SchemaUtils.create(Users)
+        SchemaUtils.create(Users, Items, Images)
     }
 }
