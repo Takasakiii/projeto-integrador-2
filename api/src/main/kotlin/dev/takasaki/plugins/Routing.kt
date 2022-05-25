@@ -2,6 +2,7 @@ package dev.takasaki.plugins
 
 import dev.takasaki.controllers.authRouter
 import dev.takasaki.controllers.itemsRoute
+import dev.takasaki.exceptions.FileNotFoundException
 import dev.takasaki.exceptions.UnauthorizedException
 import dev.takasaki.exceptions.database.DuplicateRegisterException
 import dev.takasaki.extensions.getValidationErrors
@@ -29,6 +30,9 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.Unauthorized,
                 ErrorDTO(message = cause.message ?: "Unauthorized")
             )
+        }
+        exception<FileNotFoundException> { call, cause ->
+            call.respond(HttpStatusCode.NotFound, ErrorDTO(message = cause.message ?: "File not found"))
         }
     }
 
