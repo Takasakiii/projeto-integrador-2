@@ -1,6 +1,7 @@
 package dev.takasaki.plugins
 
 import dev.takasaki.controllers.authRouter
+import dev.takasaki.controllers.itemsRoute
 import dev.takasaki.exceptions.UnauthorizedException
 import dev.takasaki.exceptions.database.DuplicateRegisterException
 import dev.takasaki.extensions.getValidationErrors
@@ -33,5 +34,6 @@ fun Application.configureRouting() {
 
     routing {
         authRouter()
+        itemsRoute()
     }
 }
