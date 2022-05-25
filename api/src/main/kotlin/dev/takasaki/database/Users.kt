@@ -17,12 +17,11 @@ import java.util.*
 
 object Users : Table() {
     val id = varchar("id", 32)
-    val name = varchar("name", 50)
-    val surname = varchar("surname", 256)
-    val email = varchar("email", 256).uniqueIndex()
-    val password = varchar("password", 256)
-    val phone = varchar("phone", 11).nullable()
-    val userType = enumeration<UserType>("user_type")
+    private val name = varchar("name", 50)
+    private val surname = varchar("surname", 256)
+    private val email = varchar("email", 256).uniqueIndex()
+    private val password = varchar("password", 256)
+    private val phone = varchar("phone", 11).nullable()
 
     override val primaryKey = PrimaryKey(id)
 
@@ -40,11 +39,10 @@ object Users : Table() {
                     it[password] = passwordHash
                     it[surname] = user.surname
                     it[phone] = user.phone
-                    it[userType] = user.userType
                 }
             }
 
-            return SecureUser(idGen, user.name, user.surname, user.email, user.phone, user.userType)
+            return SecureUser(idGen, user.name, user.surname, user.email, user.phone)
         } catch (e: ExposedSQLException) {
             if (e.cause is SQLIntegrityConstraintViolationException) {
                 throw DuplicateRegisterException("User with email ${user.email} already exists")
@@ -72,7 +70,6 @@ object Users : Table() {
                 locatedUser[surname],
                 locatedUser[email],
                 locatedUser[phone],
-                locatedUser[userType]
             )
         } catch (e: NoSuchElementException) {
             throw UnauthorizedException("Invalid credentials")

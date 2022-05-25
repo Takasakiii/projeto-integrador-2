@@ -1,6 +1,5 @@
 package dev.takasaki.dtos
 
-import dev.takasaki.database.UserType
 import org.valiktor.functions.*
 import org.valiktor.validate
 
@@ -10,7 +9,6 @@ data class User(
     val email: String,
     val password: String,
     val phone: String?,
-    val userType: UserType
 ) : IValidable {
     override fun validateItems() {
         validate(this) {
@@ -19,7 +17,6 @@ data class User(
             validate(User::email).isNotBlank().isEmail().isNotNull()
             validate(User::password).hasSize(min = 8).isNotNull()
             validate(User::phone).hasSize(min = 11, max = 11)
-            validate(User::userType).isIn(UserType.values().asIterable()).isNotNull()
         }
     }
 }
