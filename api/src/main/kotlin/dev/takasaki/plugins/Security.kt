@@ -4,6 +4,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import dev.takasaki.database.Users
 import io.ktor.server.application.*
 
 fun Application.configureSecurity() {
@@ -22,7 +23,11 @@ fun Application.configureSecurity() {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains(jwtAudience)
+                        && Users.hasUser(credential.payload.getClaim("id").asString()))
+                    JWTPrincipal(credential.payload)
+                else
+                    null
             }
         }
     }

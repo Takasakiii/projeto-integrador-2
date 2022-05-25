@@ -75,5 +75,13 @@ object Users : Table() {
             throw UnauthorizedException("Invalid credentials")
         }
     }
+
+    fun hasUser(expectedId: String): Boolean {
+        return transaction {
+            Users.select {
+                Users.id eq expectedId
+            }.count() > 0
+        }
+    }
 }
 
