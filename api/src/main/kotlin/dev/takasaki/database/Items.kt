@@ -3,13 +3,11 @@ package dev.takasaki.database
 import cool.graph.cuid.Cuid
 import dev.takasaki.dtos.Item
 import dev.takasaki.dtos.ItemResponse
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Items: Table() {
-    val id = varchar("id", 32)
+    private val id = varchar("id", 32)
     private val name = varchar("name", 256)
     private val description = text("description")
     private val amount = integer("amount")
@@ -40,6 +38,22 @@ object Items: Table() {
             items.map {
                 ItemResponse(it[Items.id], it[name], it[description], it[amount], it[owner])
             }
+        }
+    }
+
+    fun hasItem(userId: String, itemId: String): Boolean {
+        return transaction {
+            Items.select {
+                Items.id eq itemId and (owner eq userId)
+            }.count() > 0
+        }
+    }
+
+    fun hasItem(itemId: String): Boolean {
+        return transaction {
+            Items.select {
+                Items.id eq itemId
+            }.count() > 0
         }
     }
 }
