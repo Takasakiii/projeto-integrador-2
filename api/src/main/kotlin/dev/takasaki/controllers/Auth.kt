@@ -36,7 +36,7 @@ fun Route.authRouter() {
                 .withAudience(audience)
                 .withIssuer(issuer)
                 .withClaim("id", userData.id)
-                .withExpiresAt(Date(System.currentTimeMillis() + 60000))
+                .withExpiresAt(Date(System.currentTimeMillis() + 604800000))
                 .sign(Algorithm.HMAC256(secret))
 
             val tokenResponse = Token(userData, token)
