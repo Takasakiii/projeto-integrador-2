@@ -1,7 +1,6 @@
 package dev.takasaki.plugins
 
 
-import dev.takasaki.database.Images
 import dev.takasaki.database.Items
 import dev.takasaki.database.Users
 import io.ktor.server.application.*
@@ -19,6 +18,6 @@ fun Application.configureDatabase() {
     Database.connect(url, driver = "com.mysql.cj.jdbc.Driver", user = username, password = password)
 
     transaction {
-        SchemaUtils.create(Users, Items, Images)
+        SchemaUtils.create(Users, Items)
     }
 }
