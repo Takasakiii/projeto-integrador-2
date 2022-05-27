@@ -14,4 +14,5 @@ fun Application.module() {
     configureSerialization()
     configureHTTP()
     configureSecurity()
+    configureWebsocket()
 }
