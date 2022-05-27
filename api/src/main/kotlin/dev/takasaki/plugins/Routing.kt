@@ -4,6 +4,7 @@ import dev.takasaki.controllers.authRouter
 import dev.takasaki.controllers.itemsRoute
 import dev.takasaki.exceptions.FileNotFoundException
 import dev.takasaki.exceptions.UnauthorizedException
+import dev.takasaki.exceptions.UnsupportedImageException
 import dev.takasaki.exceptions.database.DuplicateRegisterException
 import dev.takasaki.extensions.getValidationErrors
 import io.ktor.server.routing.*
@@ -33,6 +34,9 @@ fun Application.configureRouting() {
         }
         exception<FileNotFoundException> { call, cause ->
             call.respond(HttpStatusCode.NotFound, ErrorDTO(message = cause.message ?: "File not found"))
+        }
+        exception<UnsupportedImageException> { call, cause ->
+            call.respond(HttpStatusCode.UnsupportedMediaType, ErrorDTO(message = cause.message ?: "Unsupported image"))
         }
     }
 
