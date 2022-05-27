@@ -3,6 +3,7 @@ package dev.takasaki.database
 import cool.graph.cuid.Cuid
 import dev.takasaki.dtos.Item
 import dev.takasaki.dtos.ItemResponse
+import dev.takasaki.exceptions.database.NotFoundException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -54,6 +55,20 @@ object Items: Table() {
             Items.select {
                 Items.id eq itemId
             }.count() > 0
+        }
+    }
+
+    fun get(itemId: String): ItemResponse {
+        try {
+            return transaction {
+                val item = Items.select {
+                    Items.id eq itemId
+                }.first()
+
+                ItemResponse(item[Items.id], item[name], item[description], item[amount], item[owner])
+            }
+        } catch (e: NoSuchElementException) {
+            throw NotFoundException("$itemId not found")
         }
     }
 }
