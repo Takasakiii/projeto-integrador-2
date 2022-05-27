@@ -24,6 +24,19 @@ fun Route.interestMessagesRoute() {
 
                 call.respond(HttpStatusCode.Created, response)
             }
+
+            get {
+                val page = call.request.queryParameters["page"]?.toUInt() ?: 0U
+                val item = call.request.queryParameters["item"]
+                val read = call.request.queryParameters["read"]?.toBoolean() ?: false
+
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asString()
+
+                val response = InterestMessages.list(userId, item, read, page)
+
+                call.respond(response)
+            }
         }
     }
 }

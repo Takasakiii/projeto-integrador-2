@@ -3,8 +3,7 @@ package dev.takasaki.database
 import cool.graph.cuid.Cuid
 import dev.takasaki.dtos.InterestMessage
 import dev.takasaki.dtos.InterestMessagesResponse
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object InterestMessages: Table() {
@@ -15,6 +14,8 @@ object InterestMessages: Table() {
     private val message = text("message")
     private val createdAt = long("created_at")
     private val read = bool("read").index().default(false)
+
+    override val primaryKey = PrimaryKey(id)
 
     fun create(message: InterestMessage, messageAuthor: String): InterestMessagesResponse {
         val idGen = Cuid.createCuid()
@@ -43,5 +44,36 @@ object InterestMessages: Table() {
             message.message,
             now,
         )
+    }
+
+    fun list(
+        ownerId: String,
+        itemQuery: String?,
+        readQuery: Boolean = false,
+        page: UInt = 0U
+    ): List<InterestMessagesResponse> {
+        return transaction {
+            val locatedMessages = if (itemQuery == null) {
+                InterestMessages.select {
+                     userReceive eq ownerId and (read eq readQuery)
+                }
+            } else {
+                InterestMessages.select{
+                    item eq itemQuery and (userReceive eq ownerId or (userSend eq ownerId)) and (read eq readQuery)
+                }
+            }.limit(10, (page * 10U).toLong())
+
+            locatedMessages.map {
+                InterestMessagesResponse(
+                    it[InterestMessages.id],
+                    it[item],
+                    it[userSend],
+                    it[userReceive],
+                    it[message],
+                    it[createdAt],
+                    it[read]
+                )
+            }
+        }
     }
 }
