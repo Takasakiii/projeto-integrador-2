@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Items: Table() {
-    private val id = varchar("id", 32)
+    val id = varchar("id", 32)
     private val name = varchar("name", 256)
     private val description = text("description")
     private val amount = integer("amount")
