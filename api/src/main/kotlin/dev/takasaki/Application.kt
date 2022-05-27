@@ -10,9 +10,9 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     configureDatabase()
     configureStorage()
+    configureWebsocket()
     configureRouting()
     configureSerialization()
     configureHTTP()
     configureSecurity()
-    configureWebsocket()
 }
