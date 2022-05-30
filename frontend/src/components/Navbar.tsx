@@ -57,9 +57,11 @@ const Navbar: React.FC = () => {
         <div className="navbar-end">
           <div className="navbar-item">
             <div className="buttons">
-              <a className="button is-primary">
-                <strong>Cadastrar-se</strong>
-              </a>
+              <Link href="/auth/singup">
+                <a className="button is-primary">
+                  <strong>Cadastre-se</strong>
+                </a>
+              </Link>
               <a className="button is-light">Logar-se</a>
             </div>
           </div>
