@@ -1,3 +1,7 @@
 :root {
   --font-marca: "Pacifico", cursive;
 }
+
+html {
+  background-color: whitesmoke;
+}
