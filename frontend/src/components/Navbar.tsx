@@ -2,6 +2,9 @@ import { css } from "@emotion/react";
 import Link from "next/link";
 import { useState } from "react";
 import classNames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../storage";
+import { logout } from "../storage/Auth.slice";
 
 const titleMarca = css({
   fontFamily: "var(--font-marca)",
@@ -10,9 +13,15 @@ const titleMarca = css({
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
   function handleToggle() {
     setIsOpen(!isOpen);
+  }
+
+  function handleLogout() {
+    dispatch(logout());
   }
 
   return (
@@ -56,16 +65,28 @@ const Navbar: React.FC = () => {
 
         <div className="navbar-end">
           <div className="navbar-item">
-            <div className="buttons">
-              <Link href="/auth/singup">
-                <a className="button is-primary">
-                  <strong>Cadastre-se</strong>
-                </a>
-              </Link>
-              <Link href="/auth/login">
-                <a className="button is-light">Logar-se</a>
-              </Link>
-            </div>
+            {auth.user ? (
+              <div className="navbar-item has-dropdown is-hoverable">
+                <a className="navbar-link is-arrowless">{auth.user.name}</a>
+                <div className="navbar-dropdown">
+                  <hr className="navbar-divider" />
+                  <a className="navbar-item" onClick={handleLogout}>
+                    Sair
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="buttons">
+                <Link href="/auth/singup">
+                  <a className="button is-primary">
+                    <strong>Cadastre-se</strong>
+                  </a>
+                </Link>
+                <Link href="/auth/login">
+                  <a className="button is-light">Logar-se</a>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
