@@ -14,6 +14,16 @@ export interface SecureUser {
   phone?: string;
 }
 
+export interface Login {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: SecureUser;
+}
+
 class DoacaoApi {
   private baseUrl: string;
 
@@ -49,6 +59,27 @@ class DoacaoApi {
 
     console.error(response.status, await response.json());
     throw new Error("Erro ao registrar usuário");
+  }
+
+  async login(login: Login): Promise<LoginResponse> {
+    const response = await fetch(`${this.baseUrl}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(login),
+    });
+
+    if (response.status === 200) {
+      return response.json();
+    }
+
+    if (response.status === 401) {
+      throw new Error("Email ou senha inválidos");
+    }
+
+    console.error(response.status, await response.json());
+    throw new Error("Erro ao realizar o login, tente novamente mais tarde.");
   }
 }
 
