@@ -16,7 +16,7 @@ data class User(
             validate(User::surname).hasSize(min = 3, max = 255).isNotNull()
             validate(User::email).isNotBlank().isEmail().isNotNull()
             validate(User::password).hasSize(min = 8).isNotNull()
-            validate(User::phone).hasSize(min = 11, max = 11)
+            validate(User::phone).hasSize(min = 10, max = 11)
         }
     }
 }
