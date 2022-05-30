@@ -62,7 +62,9 @@ const Navbar: React.FC = () => {
                   <strong>Cadastre-se</strong>
                 </a>
               </Link>
-              <a className="button is-light">Logar-se</a>
+              <Link href="/auth/login">
+                <a className="button is-light">Logar-se</a>
+              </Link>
             </div>
           </div>
         </div>
