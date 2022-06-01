@@ -63,17 +63,15 @@ const Navbar: React.FC = () => {
           "is-active": isOpen,
         })}
       >
-        {/* <div className="navbar-start">
-          <a className="navbar-item">Pagina Inicial</a>
-        </div> */}
-
         <div className="navbar-end">
           <div className="navbar-item">
             {auth.user ? (
               <div className="navbar-item has-dropdown is-hoverable">
                 <a className="navbar-link is-arrowless">{auth.user.name}</a>
                 <div className="navbar-dropdown" css={dropDownFixPosition}>
-                  <a className="navbar-item">Adicionar Item para Doação</a>
+                  <Link href="/items/register">
+                    <a className="navbar-item">Adicionar Item para Doação</a>
+                  </Link>
                   <hr className="navbar-divider" />
                   <a className="navbar-item" onClick={handleLogout}>
                     Sair

@@ -19,9 +19,33 @@ export interface Login {
   password: string;
 }
 
-export interface LoginResponse {
+export interface LoginResponseRaw {
   token: string;
   user: SecureUser;
+}
+
+export interface LoginResponse {
+  restrictedApi: RestrictedApi;
+  user: SecureUser;
+}
+
+export interface ItemRegister {
+  name: string;
+  description: string;
+  amount: number;
+}
+
+export interface ItemResponse {
+  id: string;
+  name: string;
+  description: string;
+  amount: number;
+  owner: string;
+}
+
+export interface ItemImageResponse {
+  item: ItemResponse;
+  images: string[];
 }
 
 class DoacaoApi {
@@ -71,7 +95,11 @@ class DoacaoApi {
     });
 
     if (response.status === 200) {
-      return response.json();
+      const { token, user } = (await response.json()) as LoginResponseRaw;
+      return {
+        restrictedApi: new RestrictedApi(this.baseUrl, token),
+        user,
+      };
     }
 
     if (response.status === 401) {
@@ -80,6 +108,76 @@ class DoacaoApi {
 
     console.error(response.status, await response.json());
     throw new Error("Erro ao realizar o login, tente novamente mais tarde.");
+  }
+
+  async getItems(page: number = 0): Promise<ItemResponse[]> {
+    const response = await fetch(`${this.baseUrl}/items?page=${page}`);
+
+    if (response.status === 200) {
+      return response.json();
+    }
+
+    console.error(response.status, await response.json());
+    throw new Error("Erro ao buscar itens");
+  }
+}
+
+export class RestrictedApi {
+  constructor(private baseUrl: string, private token: string) {}
+
+  async addItem(
+    itemData: ItemRegister,
+    images: File[]
+  ): Promise<ItemImageResponse> {
+    const responseItemRegister = await fetch(`${this.baseUrl}/items`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
+      body: JSON.stringify(itemData),
+    });
+
+    if (responseItemRegister.status !== 201) {
+      console.error(
+        responseItemRegister.status,
+        await responseItemRegister.json()
+      );
+      throw new Error("Erro ao cadastrar item");
+    }
+
+    const item: ItemResponse = await responseItemRegister.json();
+
+    let imagesResponse: { images: string[] } = { images: [] };
+    if (images.length > 0) {
+      const formData = new FormData();
+      for (const image of images) {
+        formData.append("image", image);
+      }
+
+      const responseImages = await fetch(
+        `${this.baseUrl}/items/${item.id}/images`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (responseImages.status !== 201) {
+        console.error(responseImages.status, await responseImages.json());
+        throw new Error("Erro ao cadastrar imagens");
+      }
+
+      imagesResponse = await responseImages.json();
+    }
+
+    return {
+      item,
+      images: imagesResponse.images,
+    };
   }
 }
 
