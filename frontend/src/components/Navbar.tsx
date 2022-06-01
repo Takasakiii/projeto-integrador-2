@@ -11,6 +11,10 @@ const titleMarca = css({
   fontSize: "1.4rem",
 });
 
+const dropDownFixPosition = css({
+  left: "-8rem",
+});
+
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const auth = useSelector((state: RootState) => state.auth);
@@ -68,7 +72,8 @@ const Navbar: React.FC = () => {
             {auth.user ? (
               <div className="navbar-item has-dropdown is-hoverable">
                 <a className="navbar-link is-arrowless">{auth.user.name}</a>
-                <div className="navbar-dropdown">
+                <div className="navbar-dropdown" css={dropDownFixPosition}>
+                  <a className="navbar-item">Adicionar Item para Doação</a>
                   <hr className="navbar-divider" />
                   <a className="navbar-item" onClick={handleLogout}>
                     Sair
