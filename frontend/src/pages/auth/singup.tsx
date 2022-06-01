@@ -24,18 +24,18 @@ const SingUpPage: NextPage = () => {
   function handleSubmit(data: UserRegister) {
     doacaoApi
       .registerUser(data)
+      .then(() => {
+        setNotificationContent({
+          children: "Usuário cadastrado com sucesso!",
+          color: "success",
+        });
+      })
       .catch((err) => {
         setNotificationContent({
           children: err.message,
           color: "danger",
         });
         notificationRef.current?.show();
-      })
-      .then(() => {
-        setNotificationContent({
-          children: "Usuário cadastrado com sucesso!",
-          color: "success",
-        });
       });
   }
 
