@@ -41,6 +41,12 @@ fun Route.itemsRoute() {
             call.respond(itemsWithThumbs)
         }
 
+        get("/{id}") {
+            val id = call.parameters["id"]!!
+            val item = Items.get(id)
+            call.respond(item)
+        }
+
         authenticate {
             post {
                 val itemData = call.receive<Item>()
