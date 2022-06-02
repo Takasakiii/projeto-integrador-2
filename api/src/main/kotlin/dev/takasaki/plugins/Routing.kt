@@ -3,6 +3,7 @@ package dev.takasaki.plugins
 import dev.takasaki.controllers.authRouter
 import dev.takasaki.controllers.interestMessagesRoute
 import dev.takasaki.controllers.itemsRoute
+import dev.takasaki.controllers.usersRoute
 import dev.takasaki.exceptions.FileNotFoundException
 import dev.takasaki.exceptions.UnauthorizedException
 import dev.takasaki.exceptions.UnsupportedImageException
@@ -49,5 +50,6 @@ fun Application.configureRouting() {
         authRouter()
         itemsRoute()
         interestMessagesRoute()
+        usersRoute()
     }
 }

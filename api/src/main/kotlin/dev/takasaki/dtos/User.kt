@@ -43,3 +43,8 @@ data class Login(
     }
 }
 
+data class PublicUser(
+    val id: String,
+    val name: String,
+    val surname: String
+)
