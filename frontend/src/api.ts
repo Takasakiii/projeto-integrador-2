@@ -60,6 +60,12 @@ export interface ItemWithUser {
   user: PublicUser;
 }
 
+export interface IPagination<T> {
+  totalPages: number;
+  currentPage: number;
+  data: T[];
+}
+
 class DoacaoApi {
   private baseUrl: string;
 
@@ -122,7 +128,7 @@ class DoacaoApi {
     throw new Error("Erro ao realizar o login, tente novamente mais tarde.");
   }
 
-  async getItems(page: number = 0): Promise<ItemWithUser[]> {
+  async getItems(page: number = 0): Promise<IPagination<ItemWithUser>> {
     const response = await fetch(`${this.baseUrl}/items?page=${page}`);
 
     if (response.status === 200) {
@@ -140,7 +146,11 @@ class DoacaoApi {
         throw new Error("Erro ao buscar usuário");
       });
 
-      return Promise.all(itemWithUserPromise);
+      return {
+        data: await Promise.all(itemWithUserPromise),
+        totalPages: Number(response.headers.get("X-Total-Pages") ?? "0"),
+        currentPage: page,
+      };
     }
 
     console.error(response.status, await response.json());
