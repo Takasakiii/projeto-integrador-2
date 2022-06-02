@@ -19,3 +19,22 @@ data class Item(
     }
 
 }
+
+data class ItemResponse(
+    val id: String,
+    val name: String,
+    val description: String,
+    val amount: Int,
+    val owner: String,
+)
+
+
+data class ItemResponseWithThumbnail(
+    val id: String,
+    val name: String,
+    val description: String,
+    val amount: Int,
+    val owner: String,
+
+    val thumbnail: String?
+)

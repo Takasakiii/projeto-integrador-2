@@ -20,3 +20,26 @@ data class User(
         }
     }
 }
+
+data class SecureUser (
+    val id: String,
+    val name: String,
+    val surname: String,
+    val email: String,
+    val phone: String?,
+)
+
+data class Token(val user: SecureUser, val token: String)
+
+data class Login(
+    val email: String,
+    val password: String
+): IValidable {
+    override fun validateItems() {
+        validate(this) {
+            validate(Login::email).isNotNull().isNotBlank()
+            validate(Login::password).isNotNull().isNotBlank()
+        }
+    }
+}
+
