@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBan } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
-export interface ItemCardProps extends HTMLProps<HTMLDivElement> {
+export interface ItemCardProps extends HTMLProps<HTMLAnchorElement> {
   item: ItemWithUser;
 }
 
@@ -47,7 +47,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
   return (
     <Link href={`/items/${item.id}`}>
-      <a css={cardLink}>
+      <a css={cardLink} {...props}>
         <div className="card">
           <div className="card-image">
             <figure className="image is-4by3">
@@ -56,6 +56,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                   src={thumbnail}
                   alt={`Imagem de ${item.name}`}
                   layout="fill"
+                  objectFit="cover"
                 />
               ) : (
                 <div css={noImage}>
