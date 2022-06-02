@@ -3,6 +3,7 @@ package dev.takasaki.controllers
 import dev.takasaki.database.Items
 import dev.takasaki.dtos.ImageCollection
 import dev.takasaki.dtos.Item
+import dev.takasaki.dtos.ItemResponseWithThumbnail
 import dev.takasaki.plugins.Storage
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -22,7 +23,18 @@ fun Route.itemsRoute() {
                 0U
             }
 
-            val items = Items.list(page)
+            val items = Items.list(page).map {
+                val thumbnail = Storage(it.id).list().firstOrNull()
+
+                ItemResponseWithThumbnail(
+                    it.id,
+                    it.name,
+                    it.description,
+                    it.amount,
+                    it.owner,
+                    thumbnail
+                )
+            }
 
             call.respond(items)
         }
