@@ -24,7 +24,7 @@ fun Route.itemsRoute() {
             }
 
             val (qtdPages, items) = Items.list(page)
-            items.map {
+            val itemsWithThumbs = items.map {
                 val thumbnail = Storage(it.id).list().firstOrNull()
 
                 ItemResponseWithThumbnail(
@@ -38,7 +38,7 @@ fun Route.itemsRoute() {
             }
 
             call.response.headers.append("X-Total-Pages", qtdPages.toString())
-            call.respond(items)
+            call.respond(itemsWithThumbs)
         }
 
         authenticate {
