@@ -6,6 +6,7 @@ import dev.takasaki.dtos.ItemResponse
 import dev.takasaki.exceptions.database.NotFoundException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.math.ceil
 
 object Items: Table() {
     val id = varchar("id", 32)
@@ -32,13 +33,17 @@ object Items: Table() {
         return ItemResponse(idGen, item.name, item.description, item.amount, userId)
     }
 
-    fun list(page: UInt): List<ItemResponse> {
+    fun list(page: UInt): Pair<Int, List<ItemResponse>> {
         return transaction {
             val items = Items.selectAll().limit(10, (page * 10U).toLong())
 
-            items.map {
+            val itemsFormatted = items.map {
                 ItemResponse(it[Items.id], it[name], it[description], it[amount], it[owner])
             }
+
+            val qtdPages = Items.selectAll().count() / 10.0
+
+            Pair(ceil(qtdPages).toInt(), itemsFormatted)
         }
     }
 
