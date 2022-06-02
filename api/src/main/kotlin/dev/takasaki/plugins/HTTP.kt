@@ -16,7 +16,7 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Get)
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.ContentType)
-
+        exposeHeader("X-Total-Pages")
 
         anyHost()
     }
