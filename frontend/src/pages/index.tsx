@@ -1,10 +1,10 @@
 import { css } from "@emotion/react";
 import { GetServerSideProps, NextPage } from "next";
-import doacaoApi, { ItemResponse } from "../api";
+import doacaoApi, { ItemWithUser } from "../api";
 import ItemCard from "../components/ItemCard";
 
 interface Props {
-  items: ItemResponse[];
+  items: ItemWithUser[];
 }
 
 const listCss = css({
@@ -12,6 +12,8 @@ const listCss = css({
   gridTemplateColumns: "repeat(auto-fill, clamp(300px, 40%, 500px))",
   justifyContent: "center",
   gap: "1rem",
+  paddingTop: "1rem",
+  marginBottom: "1rem",
 });
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
@@ -32,7 +34,7 @@ const IndexPage: NextPage<Props> = (props) => {
   return (
     <div css={listCss}>
       {props.items.map((item) => (
-        <ItemCard key={item.id} item={item} />
+        <ItemCard key={item.item.id} item={item} />
       ))}
     </div>
   );

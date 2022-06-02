@@ -41,11 +41,23 @@ export interface ItemResponse {
   description: string;
   amount: number;
   owner: string;
+  thumbnail?: string;
 }
 
 export interface ItemImageResponse {
   item: ItemResponse;
   images: string[];
+}
+
+export interface PublicUser {
+  id: string;
+  name: string;
+  surname: string;
+}
+
+export interface ItemWithUser {
+  item: ItemResponse;
+  user: PublicUser;
 }
 
 class DoacaoApi {
@@ -110,15 +122,34 @@ class DoacaoApi {
     throw new Error("Erro ao realizar o login, tente novamente mais tarde.");
   }
 
-  async getItems(page: number = 0): Promise<ItemResponse[]> {
+  async getItems(page: number = 0): Promise<ItemWithUser[]> {
     const response = await fetch(`${this.baseUrl}/items?page=${page}`);
 
     if (response.status === 200) {
-      return response.json();
+      const item: ItemResponse[] = await response.json();
+      const itemWithUserPromise = item.map(async (item) => {
+        const user = await fetch(`${this.baseUrl}/users/${item.owner}`);
+
+        if (user.status === 200) {
+          return {
+            item,
+            user: (await user.json()) as PublicUser,
+          };
+        }
+
+        throw new Error("Erro ao buscar usuário");
+      });
+
+      return Promise.all(itemWithUserPromise);
     }
 
     console.error(response.status, await response.json());
     throw new Error("Erro ao buscar itens");
+  }
+
+  getItemThumbnailUrl(item: ItemResponse): string | null {
+    if (!item.thumbnail) return null;
+    return `${this.baseUrl}/items/${item.id}/images/${item.thumbnail}`;
   }
 }
 
