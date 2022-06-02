@@ -40,6 +40,9 @@ services:
       - DB_USER=root
       - DB_PASSWORD=${DB_PASSWORD}
     restart: always
+    volumes:
+      - image-storage:/app/upload
 
 volumes:
   database-data:
+  image-storage:

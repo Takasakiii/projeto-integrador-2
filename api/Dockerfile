@@ -17,6 +17,8 @@ ENV DB_URL=jdbc:mysql://localhost:3306/doacoes
 ENV DB_USERNAME=root
 ENV DB_PASSWORD=root
 
+VOLUME [ "/app/upload" ]
+
 EXPOSE ${PORT}
 
 CMD [ "java", "-jar", "app.jar" ]
