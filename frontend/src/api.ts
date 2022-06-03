@@ -161,6 +161,33 @@ class DoacaoApi {
     if (!item.thumbnail) return null;
     return `${this.baseUrl}/items/${item.id}/images/${item.thumbnail}`;
   }
+
+  getImageUrl(image: string, itemId: string): string {
+    return `${this.baseUrl}/items/${itemId}/images/${image}`;
+  }
+
+  async getItemImages(id: string): Promise<string[]> {
+    const response = await fetch(`${this.baseUrl}/items/${id}/images`);
+
+    if (response.status === 200) {
+      const payload = await response.json();
+      return payload.images;
+    }
+
+    console.error(response.status, await response.json());
+    throw new Error("Erro ao buscar imagens");
+  }
+
+  async getItem(id: string): Promise<ItemResponse> {
+    const response = await fetch(`${this.baseUrl}/items/${id}`);
+
+    if (response.status === 200) {
+      return await response.json();
+    }
+
+    console.error(response.status, await response.json());
+    throw new Error("Erro ao buscar item");
+  }
 }
 
 export class RestrictedApi {
