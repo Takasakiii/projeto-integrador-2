@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import doacaoApi, { Login } from "../../api";
 import Field from "../../components/Field";
-import Form from "../../components/Form";
+import { Form } from "../../components/Cards";
 import Notification, {
   NotificationProps,
   NotificationRef,

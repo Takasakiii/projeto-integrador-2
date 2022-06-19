@@ -16,7 +16,10 @@ const box = css({
   width: "clamp(300px, 40%, 600px)",
 });
 
-const Form: React.FC<HTMLProps<HTMLFormElement>> = ({ children, ...props }) => {
+export const Form: React.FC<HTMLProps<HTMLFormElement>> = ({
+  children,
+  ...props
+}) => {
   return (
     <div css={container}>
       <form className="box" css={box} {...props}>
@@ -26,4 +29,15 @@ const Form: React.FC<HTMLProps<HTMLFormElement>> = ({ children, ...props }) => {
   );
 };
 
-export default Form;
+export const Card: React.FC<HTMLProps<HTMLDivElement>> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <div css={container}>
+      <div className="box" css={box} {...props}>
+        {children}
+      </div>
+    </div>
+  );
+};

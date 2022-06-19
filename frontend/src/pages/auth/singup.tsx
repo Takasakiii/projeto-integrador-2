@@ -10,7 +10,7 @@ import Notification, {
   NotificationProps,
   NotificationRef,
 } from "../../components/Notification";
-import Form from "../../components/Form";
+import { Form } from "../../components/Cards";
 
 const SingUpPage: NextPage = () => {
   const form = useForm<UserRegister>();

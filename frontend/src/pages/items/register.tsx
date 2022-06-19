@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { ItemRegister } from "../../api";
 import Field from "../../components/Field";
 import FilesList, { FileListRef } from "../../components/FilesList";
-import Form from "../../components/Form";
+import { Form } from "../../components/Cards";
 import Notification, {
   NotificationProps,
   NotificationRef,
