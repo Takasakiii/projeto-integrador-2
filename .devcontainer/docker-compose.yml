@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VARIANT: 16-bullseye
+    volumes:
+      - ..:/workspace:cached
+    environment:
+      - NEXT_PUBLIC_API_BASEURL=http://backend:4000
+    command: sleep infinity
+
+  backend:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - PORT=4000
+      - JWT_SECRET=jwtsecret
+      - DB_USER=root
+      - DB_PASSWORD=dbpassword
+      - DB_URL=jdbc:mysql://db:3306/doacoes
+    restart: unless-stopped
+    volumes:
+      - image-storage:/app/upload
+    command:
+      [
+        './wait-for-it.sh',
+        'db:3306',
+        '-s',
+        '--',
+        'java',
+        '-jar',
+        'app.jar'
+      ]
+
+  db:
+    image: 'mariadb:10.3'
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD=dbpassword
+      - MARIADB_DATABASE=doacoes
+
+volumes:
+  database-data:
+  image-storage:

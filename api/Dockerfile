@@ -10,6 +10,8 @@ FROM openjdk:11.0.15-jre as runner
 
 WORKDIR /app
 COPY --from=builder /build/build/libs/dev.takasaki.api-0.0.1-all.jar app.jar
+COPY ./wait-for-it.sh .
+RUN chmod +x wait-for-it.sh
 
 ENV PORT=3000
 ENV JWT_SECRET=pls-change-me
