@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LoginResponse, RestrictedApi, SecureUser } from "../api";
+import { LoginResponse, RestrictedData, SecureUser } from "../api";
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    restrictedApi: null as RestrictedApi | null,
+    restrictedApi: null as RestrictedData | null,
     user: null as SecureUser | null,
   },
   reducers: {

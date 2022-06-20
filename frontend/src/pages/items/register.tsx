@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { ItemRegister } from "../../api";
+import { ItemRegister, RestrictedApi } from "../../api";
 import Field from "../../components/Field";
 import FilesList, { FileListRef } from "../../components/FilesList";
 import { Form } from "../../components/Cards";
@@ -33,11 +33,12 @@ const ItemsRegisterPage: NextPage = () => {
   });
 
   function handleSubmit(data: ItemRegister) {
-    const api = auth.restrictedApi!;
+    const restrictedData = auth.restrictedApi!;
 
     const images = filesListRef.current?.getFiles()!;
 
-    api
+    const restrictedApi = new RestrictedApi(restrictedData);
+    restrictedApi
       .addItem(data, images)
       .then((data) => {
         setNotificationData({

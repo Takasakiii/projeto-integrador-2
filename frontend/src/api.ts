@@ -25,7 +25,7 @@ export interface LoginResponseRaw {
 }
 
 export interface LoginResponse {
-  restrictedApi: RestrictedApi;
+  restrictedApi: RestrictedData;
   user: SecureUser;
 }
 
@@ -115,7 +115,10 @@ class DoacaoApi {
     if (response.status === 200) {
       const { token, user } = (await response.json()) as LoginResponseRaw;
       return {
-        restrictedApi: new RestrictedApi(this.baseUrl, token),
+        restrictedApi: {
+          baseUrl: this.baseUrl,
+          token,
+        },
         user,
       };
     }
@@ -190,21 +193,29 @@ class DoacaoApi {
   }
 }
 
+export interface RestrictedData {
+  baseUrl: string;
+  token: string;
+}
+
 export class RestrictedApi {
-  constructor(private baseUrl: string, private token: string) {}
+  constructor(private restrictedData: RestrictedData) {}
 
   async addItem(
     itemData: ItemRegister,
     images: File[]
   ): Promise<ItemImageResponse> {
-    const responseItemRegister = await fetch(`${this.baseUrl}/items`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.token}`,
-      },
-      body: JSON.stringify(itemData),
-    });
+    const responseItemRegister = await fetch(
+      `${this.restrictedData.baseUrl}/items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.restrictedData.token}`,
+        },
+        body: JSON.stringify(itemData),
+      }
+    );
 
     if (responseItemRegister.status !== 201) {
       console.error(
@@ -224,11 +235,11 @@ export class RestrictedApi {
       }
 
       const responseImages = await fetch(
-        `${this.baseUrl}/items/${item.id}/images`,
+        `${this.restrictedData.baseUrl}/items/${item.id}/images`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            Authorization: `Bearer ${this.restrictedData.token}`,
           },
           body: formData,
         }
