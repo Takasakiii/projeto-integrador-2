@@ -55,7 +55,7 @@ const IndexPage: NextPage<Props> = (props) => {
       dataLength={items.length}
       next={loadMore}
       hasMore={hasMore}
-      loader={<p css={scrollMessages}>Carregando...</p>}
+      loader={<></>}
       endMessage={
         <p css={scrollMessages}>
           Você chegou ao final, não tem mais itens para mostrar.

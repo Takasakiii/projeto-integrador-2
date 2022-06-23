@@ -59,4 +59,13 @@ class Storage(collection: String) {
         if(!file.exists()) throw FileNotFoundException("File not found")
         return file
     }
+
+    fun removeStore() {
+        File(collectionPath).deleteRecursively()
+    }
+
+    fun removeItem(filename: String) {
+        val file = File("$collectionPath/$filename")
+        file.delete()
+    }
 }

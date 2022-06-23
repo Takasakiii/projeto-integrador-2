@@ -104,5 +104,25 @@ object Users : Table() {
             throw NotFoundException("User with id $id not found")
         }
     }
+
+    fun getRestricted(id: String): SecureUser {
+        return try {
+            transaction {
+                val foundUser = Users.select {
+                    Users.id eq id
+                }.first()
+
+                SecureUser(
+                    foundUser[Users.id],
+                    foundUser[name],
+                    foundUser[surname],
+                    foundUser[email],
+                    foundUser[phone]
+                )
+            }
+        } catch (e: NoSuchElementException) {
+            throw NotFoundException("User with id $id not found")
+        }
+    }
 }
 

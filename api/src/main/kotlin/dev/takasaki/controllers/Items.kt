@@ -4,6 +4,7 @@ import dev.takasaki.database.Items
 import dev.takasaki.dtos.ImageCollection
 import dev.takasaki.dtos.Item
 import dev.takasaki.dtos.ItemResponseWithThumbnail
+import dev.takasaki.exceptions.UnauthorizedException
 import dev.takasaki.plugins.Storage
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -58,6 +59,19 @@ fun Route.itemsRoute() {
                 val itemResponse = Items.add(itemData, userId)
 
                 call.respond(HttpStatusCode.Created, itemResponse)
+            }
+
+            delete("/{id}") {
+                val idItem = call.parameters["id"]!!
+
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("id").asString()
+
+                val storage = Storage(idItem)
+                storage.removeStore()
+
+                val itemDeletedResponse = Items.remove(idItem, userId)
+                call.respond(itemDeletedResponse)
             }
         }
 
@@ -115,6 +129,23 @@ fun Route.imagesRoute() {
                 }
 
                 call.respond(HttpStatusCode.Created, ImageCollection(idItem, images))
+            }
+
+            delete("/{imgName}") {
+                val idItem = call.parameters["idItem"]!!
+                val idImage = call.parameters["imgName"]!!
+                val principal = call.principal<JWTPrincipal>()!!
+                val userId = principal.payload.getClaim("id").asString()
+
+                val item = Items.get(idItem)
+
+                if (userId != item.owner) throw UnauthorizedException("Remove image not permitted")
+
+                val store = Storage(idItem)
+                store.removeItem(idImage)
+                val newImages = store.list()
+
+                call.respond(ImageCollection(idItem, newImages))
             }
         }
     }

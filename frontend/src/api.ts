@@ -53,6 +53,8 @@ export interface PublicUser {
   id: string;
   name: string;
   surname: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface ItemWithUser {
@@ -181,11 +183,23 @@ class DoacaoApi {
     throw new Error("Erro ao buscar imagens");
   }
 
-  async getItem(id: string): Promise<ItemResponse> {
+  async getItem(id: string): Promise<ItemWithUser> {
     const response = await fetch(`${this.baseUrl}/items/${id}`);
 
     if (response.status === 200) {
-      return await response.json();
+      const item: ItemResponse = await response.json();
+
+      const userResponse = await fetch(`${this.baseUrl}/users/${item.owner}`);
+      if (!userResponse.ok) {
+        console.error(userResponse.status, await userResponse.json());
+        throw new Error("Erro ao obter o dono");
+      }
+
+      const userData: SecureUser = await userResponse.json();
+      return {
+        item,
+        user: userData,
+      };
     }
 
     console.error(response.status, await response.json());
@@ -196,6 +210,20 @@ class DoacaoApi {
 export interface RestrictedData {
   baseUrl: string;
   token: string;
+}
+
+export interface InterestMessage {
+  item: string;
+  message: string;
+}
+
+export interface InterestMessageResponse {
+  id: string;
+  item: string;
+  userSend: string;
+  userReceive: string;
+  message: string;
+  createdAt: string;
 }
 
 export class RestrictedApi {
@@ -257,6 +285,36 @@ export class RestrictedApi {
       item,
       images: imagesResponse.images,
     };
+  }
+
+  async sendItemInteraction(
+    message: InterestMessage
+  ): Promise<InterestMessageResponse> {
+    const response = await fetch(`${this.restrictedData.baseUrl}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.restrictedData.token}`,
+      },
+      body: JSON.stringify(message),
+    });
+
+    if (response.status !== 201) {
+      console.error(response.status, await response.json());
+      throw new Error("Erro ao cadastrar imagens");
+    }
+
+    return await response.json();
+  }
+
+  async getRestrictedUser(id: string): Promise<SecureUser> {
+    const response = await fetch(`${this.restrictedData.baseUrl}/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${this.restrictedData.token}`,
+      },
+    });
+
+    return await response.json();
   }
 }
 

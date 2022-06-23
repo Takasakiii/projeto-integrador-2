@@ -76,4 +76,24 @@ object Items: Table() {
             throw NotFoundException("$itemId not found")
         }
     }
+
+    fun remove(itemId: String, userId: String): ItemResponse {
+        return try {
+            transaction {
+                val item = Items.select{
+                    Items.id eq itemId and(owner eq userId)
+                }.first()
+
+
+
+                Items.deleteWhere {
+                    Items.id eq itemId
+                }
+
+                ItemResponse(item[Items.id], item[name], item[description], item[amount], item[owner])
+            }
+        } catch (e: NoSuchElementException) {
+            throw NotFoundException("$itemId not found")
+        }
+    }
 }
