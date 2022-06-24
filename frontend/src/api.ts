@@ -101,7 +101,7 @@ class DoacaoApi {
       throw new Error("Email já cadastrado");
     }
 
-    console.error(response.status, await response.json());
+    console.error(response.status, response.statusText);
     throw new Error("Erro ao registrar usuário");
   }
 
@@ -129,7 +129,7 @@ class DoacaoApi {
       throw new Error("Email ou senha inválidos");
     }
 
-    console.error(response.status, await response.json());
+    console.error(response.status, response.statusText);
     throw new Error("Erro ao realizar o login, tente novamente mais tarde.");
   }
 
@@ -158,7 +158,7 @@ class DoacaoApi {
       };
     }
 
-    console.error(response.status, await response.json());
+    console.error(response.status, response.statusText);
     throw new Error("Erro ao buscar itens");
   }
 
@@ -179,7 +179,7 @@ class DoacaoApi {
       return payload.images;
     }
 
-    console.error(response.status, await response.json());
+    console.error(response.status, response.statusText);
     throw new Error("Erro ao buscar imagens");
   }
 
@@ -191,7 +191,7 @@ class DoacaoApi {
 
       const userResponse = await fetch(`${this.baseUrl}/users/${item.owner}`);
       if (!userResponse.ok) {
-        console.error(userResponse.status, await userResponse.json());
+        console.error(userResponse.status, userResponse.statusText);
         throw new Error("Erro ao obter o dono");
       }
 
@@ -202,7 +202,7 @@ class DoacaoApi {
       };
     }
 
-    console.error(response.status, await response.json());
+    console.error(response.status, response.statusText);
     throw new Error("Erro ao buscar item");
   }
 }
@@ -248,7 +248,7 @@ export class RestrictedApi {
     if (responseItemRegister.status !== 201) {
       console.error(
         responseItemRegister.status,
-        await responseItemRegister.json()
+        responseItemRegister.statusText
       );
       throw new Error("Erro ao cadastrar item");
     }
@@ -274,7 +274,7 @@ export class RestrictedApi {
       );
 
       if (responseImages.status !== 201) {
-        console.error(responseImages.status, await responseImages.json());
+        console.error(responseImages.status, responseImages.statusText);
         throw new Error("Erro ao cadastrar imagens");
       }
 
@@ -300,7 +300,7 @@ export class RestrictedApi {
     });
 
     if (response.status !== 201) {
-      console.error(response.status, await response.json());
+      console.error(response.status, response.statusText);
       throw new Error("Erro ao cadastrar imagens");
     }
 
