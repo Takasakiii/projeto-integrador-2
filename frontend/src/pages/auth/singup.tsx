@@ -29,6 +29,7 @@ const SingUpPage: NextPage = () => {
           children: "Usuário cadastrado com sucesso!",
           color: "success",
         });
+        notificationRef.current?.show();
       })
       .catch((err) => {
         setNotificationContent({
